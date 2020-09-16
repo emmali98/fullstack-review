@@ -16,8 +16,8 @@ class App extends React.Component {
   search (term) {
     console.log(`${term} was searched`);
     $.post('http://127.0.0.1:1128/repos', { term })
-    .done(() => {
-      console.log('Search successful!');
+    .done((data) => {
+      console.log('Search successful!', data);
     })
     .fail(() => {
       console.log('Error: search failed');

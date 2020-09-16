@@ -2,7 +2,7 @@ const axios = require('axios');
 const config = require('../config.js');
 
 let getReposByUsername = (username) => {
-  let options = {
+  return axios({
     url: `https://api.github.com/users/${username}/repos`,
     headers: {
       'User-Agent': 'request',
@@ -11,9 +11,10 @@ let getReposByUsername = (username) => {
     params: {
       sort: 'updated'
     }
-  };
-
-  return axios.get(options); // returning a promise?
+  })
+    .then((response) => {
+      return response.data;
+    })
 }
 
 module.exports.getReposByUsername = getReposByUsername;

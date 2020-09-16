@@ -4,27 +4,44 @@ mongoose.connect('mongodb://localhost/fetcher');
 let repoSchema = mongoose.Schema({
   name: String,
   owner: String,
-  url: String,
+  url: { type: String, unique: true },
   rank: Number,
-  description: String
+  description: String,
+  updated_at: Date
 });
 
 let Repo = mongoose.model('Repo', repoSchema);
 
 let save = (repos) => {
   var reposToSave = repos.map((repo) => {
-    var rank = repo.watchers + repo.stargazers_count;
-    rank += repo.fork ? repo.forks : 0;
+    var rank = repo.watchers + repo.stargazers_count + (repo.forks * Number(!repo.fork));
     return {
       name: repo.full_name,
       owner: repo.owner.login,
       url: repo.html_url,
       rank: rank,
-      description: repo.description
+      description: repo.description,
+      updated_at: repo.updated_at
     };
   });
 
-  return Repo.insertMany(reposToSave); // <-- a promise?
-}
+  var createRepos = () => {
+    Repo.create(reposToSave);
+  };
 
-module.exports.save = save;
+  return Repo.init()
+  .then(createRepos);
+};
+
+let getTop25 = () => {
+  return Repo.find({}).sort({ rank: -1, updated_at: -1 })
+    .then((allRepos) => {
+      return allRepos.slice(0, 25);
+    })
+};
+
+
+module.exports = {
+  save: save,
+  getTop25: getTop25
+}
