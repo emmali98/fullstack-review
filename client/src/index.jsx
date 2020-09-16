@@ -10,7 +10,6 @@ class App extends React.Component {
     this.state = {
       repos: []
     }
-
   }
 
   search (term) {
@@ -18,9 +17,21 @@ class App extends React.Component {
     $.post('http://127.0.0.1:1128/repos', { term })
     .done((data) => {
       console.log('Search successful!', data);
+      this.updateList();
     })
     .fail(() => {
       console.log('Error: search failed');
+    });
+  }
+
+  updateList () {
+    $.get('http://127.0.0.1:1128/repos')
+    .done((data) => {
+      console.log('rerendering...');
+      this.setState({
+        repos: data
+      });
+      console.log('done rendering ', data);
     })
   }
 
@@ -30,6 +41,10 @@ class App extends React.Component {
       <RepoList repos={this.state.repos}/>
       <Search onSearch={this.search.bind(this)}/>
     </div>)
+  }
+
+  componentDidMount() {
+    this.updateList()
   }
 }
 

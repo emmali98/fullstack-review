@@ -14,7 +14,7 @@ app.post('/repos', function (req, res) {
     .then((repos) => {
       db.save(repos);
     })
-    .then(() => {
+    .then((results) => {
       res.sendStatus(201);
     })
     .catch(() => {
@@ -23,8 +23,6 @@ app.post('/repos', function (req, res) {
 });
 
 app.get('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should send back the top 25 repos
   db.getTop25()
     .then((repos) => {
       res.status(200).send(repos);

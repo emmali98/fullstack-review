@@ -26,7 +26,7 @@ let save = (repos) => {
   });
 
   var createRepos = () => {
-    Repo.create(reposToSave);
+    return Repo.create(reposToSave);
   };
 
   return Repo.init()
